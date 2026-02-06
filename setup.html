@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nike Rocket - Setup Your Trading Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .step {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .step h3 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .step p {
+            color: #6b7280;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .step code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .step ul {
+            margin-left: 20px;
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .step li {
+            margin-bottom: 4px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .input-group small {
+            display: block;
+            margin-top: 4px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+        }
+        
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .warning-box strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .warning-box p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .warning-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-box {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box strong {
+            color: #1e40af;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .info-box p {
+            color: #1e3a8a;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 8px;
+            color: #1e3a8a;
+            font-size: 14px;
+        }
+        
+        .info-box li {
+            margin-bottom: 4px;
+        }
+        
+        .checklist {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .checklist strong {
+            color: #166534;
+            display: block;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            color: #166534;
+            font-size: 14px;
+        }
+        
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checklist-item label {
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        
+        .link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+        
+        .collapsible {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .collapsible-header {
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .collapsible-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .collapsible-arrow {
+            transition: transform 0.3s;
+        }
+        
+        .collapsible.open .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 16px;
+        }
+        
+        .collapsible.open .collapsible-content {
+            max-height: 500px;
+            padding: 0 16px 16px 16px;
+        }
+        
+        .collapsible-content p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .collapsible-content ol {
+            margin-left: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .collapsible-content li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Setup Your Trading Agent</h1>
+        <p class="subtitle">Configure your automated trading agent in 2 minutes</p>
+        
+        <div id="alert" class="alert"></div>
+        
+        <!-- Pre-requisites Checklist -->
+        <div class="checklist">
+            <strong>✅ Before You Begin - Quick Checklist</strong>
+            <div class="checklist-item">
+                <input type="checkbox" id="check1">
+                <label for="check1">Hyperliquid account verified to <strong>"Verified" (Intermediate)</strong> or higher</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check2">
+                <label for="check2">Clicked <strong>"Unlock Futures"</strong> in Hyperliquid</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check3">
+                <label for="check3">Created <strong>Futures API keys</strong> (not regular Spot keys — see Step 2 below for required API settings)</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="check4">
+                <label for="check4"><strong>USD balance</strong> in your Hyperliquid wallet ($300+ recommended)</label>
+            </div>
+        </div>
+        
+        <!-- Funding Info Box -->
+        <div class="info-box">
+            <strong>💵 Important: Nike Rocket trades USD pairs only!</strong>
+            <p>Your Hyperliquid wallet needs <strong>USD balance</strong> to trade. USDT/USDC won't work directly.</p>
+            
+            <div class="collapsible" id="funding-help">
+                <div class="collapsible-header" onclick="toggleCollapsible('funding-help')">
+                    <span>📖 How to fund with USDT/USDC (click to expand)</span>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p><strong>If you have USDT or USDC:</strong></p>
+                    <ol>
+                        <li>Deposit USDC to your Hyperliquid account</li>
+                        <li>Go to <strong>Trade</strong> → Select <strong>USDT/USD</strong> or <strong>USDC/USD</strong> pair</li>
+                        <li><strong>Sell</strong> your USDT/USDC for USD</li>
+                        <li>Go to <strong>Transfer</strong> → Move USD from <strong>Spot → Hyperliquid</strong></li>
+                    </ol>
+                    <p style="margin-top: 12px;"><strong>If you have crypto (BTC, ETH, etc):</strong></p>
+                    <ol>
+                        <li>Deposit crypto to Spot</li>
+                        <li>Sell for USD on Spot market</li>
+                        <li>Transfer USD to Hyperliquid wallet</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 1: API Key -->
+        <div class="step">
+            <h3>📝 Step 1: Enter Your Nike Rocket API Key</h3>
+            <p>Don't have one? <a href="/signup" class="link">Sign up here</a></p>
+        </div>
+        
+        <div class="input-group">
+            <label for="api-key">Your API Key:</label>
+            <input 
+                type="text" 
+                id="api-key" 
+                placeholder="nk_..."
+                autocomplete="off"
+            >
+            <small>Get this from your signup confirmation email</small>
+        </div>
+        
+        <!-- Step 2: Hyperliquid Credentials -->
+        <div class="step">
+            <h3>🔑 Step 2: Hyperliquid API Credentials</h3>
+            <p>Enter your Hyperliquid wallet private key and address below.</p>
+            <p style="margin-top: 8px;">Required settings:</p>
+            <ul>
+                <li><code>General API: Full access</code> ✅</li>
+                <li><code>Withdrawal API: No access</code> ⛔ (keeps your funds safe!)</li>
+                <li><code>IP Address Restrictions: Off</code> 🌐 (our servers use rotating IPs)</li>
+            </ul>
+        </div>
+        
+        <div class="warning-box">
+            <strong>⚠️ Security Notice</strong>
+            <p>Your credentials are encrypted using military-grade AES-256 encryption. We never have access to your raw API keys.</p>
+            <p>You can revoke access anytime by deleting the API key in Hyperliquid.</p>
+        </div>
+        
+        <div class="input-group">
+            <label for="hl-private-key">Hyperliquid Private Key:</label>
+            <input 
+                type="text" 
+                id="hl-private-key" 
+                placeholder="Your Hyperliquid API Public Key"
+                autocomplete="off"
+            >
+        </div>
+        
+        <div class="input-group">
+            <label for="hl-wallet">Hyperliquid Wallet Address:</label>
+            <textarea 
+                id="hl-wallet" 
+                rows="3" 
+                placeholder="Your Hyperliquid API Private Key"
+                autocomplete="off"
+            ></textarea>
+        </div>
+        
+        <!-- Step 3: Start Trading -->
+        <div class="step">
+            <h3>✅ Step 3: Activate Your Agent</h3>
+            <p>Your agent will start automatically and follow all signals from the master algorithm. It runs 24/7 on our servers - no action needed from you!</p>
+        </div>
+        
+        <button class="btn" onclick="setupAgent()">🚀 Start My Trading Agent</button>
+        
+        <p style="text-align: center; margin-top: 20px; color: #6b7280; font-size: 14px;">
+            Already set up? <a href="/dashboard" class="link">View Dashboard</a>
+        </p>
+    </div>
+    
+    <script>
+        function toggleCollapsible(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('open');
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            // Scroll to top to show alert
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    window.location.href = `/dashboard?key=${document.getElementById('api-key').value}`;
+                }, 5000);
+            }
+        }
+        
+        async function setupAgent() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            const hlPrivateKey = document.getElementById('hl-private-key').value.trim();
+            const hlWallet = document.getElementById('hl-wallet').value.trim();
+            
+            // Validation
+            if (!apiKey) {
+                showAlert('Please enter your Nike Rocket API key', 'error');
+                return;
+            }
+            
+            if (!apiKey.startsWith('nk_')) {
+                showAlert('Invalid API key format. Should start with "nk_"', 'error');
+                return;
+            }
+            
+            if (!hlPrivateKey || !hlWallet) {
+                showAlert('Please enter both Hyperliquid API key and secret', 'error');
+                return;
+            }
+            
+            // Disable button
+            const btn = document.querySelector('.btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Setting up your agent...';
+            
+            try {
+                const response = await fetch('/api/setup-agent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify({
+                        hl_private_key: hlPrivateKey,
+                        hl_wallet_address: hlWallet
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    showAlert(
+                        '✅ <strong>Agent configured successfully!</strong><br><br>' +
+                        '⏳ Your trading agent will be ready in <strong>5 minutes</strong>.<br><br>' +
+                        '<small>You can check your dashboard now, but portfolio tracking will be ' +
+                        'available once the agent finishes configuration.</small><br><br>' +
+                        '<small style="color: #6b7280;">Redirecting to dashboard in 5 seconds...</small>', 
+                        'success'
+                    );
+                } else {
+                    showAlert(`Error: ${data.message || data.detail || 'Failed to setup agent'}`, 'error');
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Start My Trading Agent';
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+                btn.disabled = false;
+                btn.textContent = '🚀 Start My Trading Agent';
+            }
+        }
+        
+        // Auto-fill API key from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const apiKeyParam = urlParams.get('key');
+        if (apiKeyParam) {
+            document.getElementById('api-key').value = apiKeyParam;
+        }
+    </script>
+</body>
+</html>

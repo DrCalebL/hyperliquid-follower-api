@@ -4,7 +4,7 @@ Nike Rocket - Balance Checker (Hyperliquid)
 Automated balance monitoring and deposit/withdrawal detection.
 
 Uses info.user_state(wallet) → marginSummary.accountValue
-Mirrors Kraken balance_checker.py consolidated v2.
+Hyperliquid SDK balance monitoring.
 
 Author: Nike Rocket Team
 """

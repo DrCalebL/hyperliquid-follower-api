@@ -3,17 +3,16 @@ Nike Rocket Position Monitor v1.0 - Hyperliquid
 ============================================================================
 
 Monitors positions and records P&L when they close.
-Mirrors Kraken Position Monitor v3.0 with HL SDK adaptations.
+Hyperliquid Position Monitor v3.0.
 
-KEY DIFFERENCES FROM KRAKEN:
 - Uses info.user_state(wallet) for positions instead of fetch_positions()
 - Uses info.user_fills(wallet) for fill history instead of fetch_my_trades()
 - Uses info.open_orders(wallet) for order status
 - No CCXT - direct Hyperliquid SDK
 - Fingerprint: wallet address (no trade history hashing needed)
-- Symbol matching: coin name (e.g., "ADA") instead of PF_ADAUSD
+- Symbol matching: coin name (e.g., "ADA") instead of ADA
 
-30-DAY BILLING FLOW (same as Kraken):
+30-DAY BILLING FLOW:
 1. Trade closes → Record profit in trades table (fee_charged = 0)
 2. Update current_cycle_profit in follower_users (accumulated)
 3. At end of 30 days, billing service calculates fee on total profit
@@ -78,7 +77,7 @@ async def log_error_to_db(pool, api_key: str, error_type: str, error_message: st
 class PositionMonitor:
     """
     Monitors positions and records actual P&L when they close.
-    Hyperliquid version - mirrors Kraken v3.0.
+    Hyperliquid version v3.0.
     """
     
     def __init__(self, db_pool):
@@ -205,7 +204,7 @@ class PositionMonitor:
                 
                 await conn.execute("""
                     INSERT INTO position_fills 
-                    (user_id, kraken_order_id, fill_id, symbol, side, price, quantity, cost, fill_timestamp, source)
+                    (user_id, hl_order_id, fill_id, symbol, side, price, quantity, cost, fill_timestamp, source)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                     ON CONFLICT (user_id, fill_id) DO NOTHING
                 """,
@@ -414,7 +413,7 @@ class PositionMonitor:
         """
         Get realized P&L from Hyperliquid fills.
         
-        Mirrors Kraken's get_kraken_realized_pnl().
+        Gets realized PnL from Hyperliquid.
         HL fills include 'closedPnl' field for realized P&L.
         """
         try:
@@ -474,7 +473,7 @@ class PositionMonitor:
         """
         Record a closed position as ONE trade with actual P&L.
         Only records trades matching a Nike Rocket signal.
-        Mirrors Kraken version v3.0 exactly.
+        v3.0 implementation.
         """
         try:
             entry_price = position.get('avg_entry_price') or position.get('entry_fill_price')
@@ -547,7 +546,7 @@ class PositionMonitor:
             async with self.db_pool.acquire() as conn:
                 await conn.execute("""
                     INSERT INTO trades 
-                    (user_id, signal_id, trade_id, kraken_order_id, opened_at, closed_at,
+                    (user_id, signal_id, trade_id, hl_order_id, opened_at, closed_at,
                      symbol, side, entry_price, exit_price, position_size, leverage,
                      profit_usd, profit_percent, exit_type, fee_charged, notes)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)

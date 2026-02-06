@@ -4,7 +4,7 @@ Nike Rocket - Hosted Trading Loop (Hyperliquid) v1.0
 Background task that polls for signals and executes trades for ALL active users.
 Runs on Railway as part of main.py startup.
 
-MIRRORS KRAKEN VERSION EXACTLY with HL SDK adaptations:
+Hyperliquid SDK trading loop.
 - Polls for latest signal ONCE per cycle (batched, not per-user)
 - Checks which users haven't acknowledged the signal
 - Decrypts user HL private key from database
@@ -15,7 +15,6 @@ MIRRORS KRAKEN VERSION EXACTLY with HL SDK adaptations:
 - ENFORCES 30-DAY BILLING: Skips users with overdue invoices
 - ERROR LOGGING: All errors logged to error_logs table
 
-KEY DIFFERENCES FROM KRAKEN:
 - Uses hyperliquid SDK instead of CCXT
 - Symbol: "ADA/USDT" → "ADA" (simple strip)
 - Balance: info.user_state(wallet) → marginSummary.accountValue
@@ -94,12 +93,12 @@ def convert_symbol_to_hl(api_symbol: str) -> str:
     
     "BTC/USDT" → "BTC"
     "ADA/USDT" → "ADA"
-    "PF_ADAUSD" → "ADA"
+    "ADA" → "ADA"
     """
     if '/' in api_symbol:
         return api_symbol.split('/')[0].upper()
     
-    # Handle Kraken format if accidentally sent
+    # Handle legacy format if accidentally sent
     base = api_symbol.upper()
     base = base.replace('PF_', '').replace('USD', '').replace('USDT', '')
     return base
@@ -153,7 +152,7 @@ class HostedTradingLoop:
     async def get_pending_signals_batched(self) -> List[Dict]:
         """
         OPTIMIZED: Get all pending signals with user info in ONE query.
-        Mirrors Kraken version exactly.
+        HL SDK version.
         """
         async with self.db_pool.acquire() as conn:
             rows = await conn.fetch("""
@@ -270,7 +269,7 @@ class HostedTradingLoop:
         - (True, "reason") → SKIP trade
         - (False, None) → safe to trade
         
-        Mirrors Kraken version with HL SDK.
+        HL SDK version.
         """
         try:
             # ===== CHECK 0: Database check for existing position on same signal =====
@@ -582,7 +581,7 @@ class HostedTradingLoop:
     ):
         """
         Emergency market close when TP/SL placement fails.
-        Mirrors Kraken version - protects users from unprotected positions.
+        Protects users from unprotected positions.
         """
         self.logger.critical(f"   🚨🚨🚨 EMERGENCY CLOSE TRIGGERED 🚨🚨🚨")
         self.logger.critical(f"   Reason: {reason}")
@@ -640,7 +639,7 @@ class HostedTradingLoop:
     async def poll_and_execute(self):
         """
         Single poll cycle - check all users for signals.
-        Mirrors Kraken version with batched execution.
+        Batched execution.
         """
         pending = await self.get_pending_signals_batched()
         

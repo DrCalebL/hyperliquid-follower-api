@@ -48,7 +48,7 @@ from config import (
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_API_URL = "https://api.resend.com/emails"
 FROM_EMAIL = os.getenv("FROM_EMAIL", "$NIKEPIG's Massive Rocket <noreply@nikerocket.io>")
-BASE_URL = os.getenv("BASE_URL", "https://nike-rocket-api-production.up.railway.app")
+BASE_URL = os.getenv("BASE_URL", "https://rocket-hla.nikepig.com")
 
 # Coinbase Commerce
 COINBASE_API_KEY = os.getenv("COINBASE_COMMERCE_API_KEY", "")

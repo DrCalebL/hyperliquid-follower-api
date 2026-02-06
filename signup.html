@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="$300 became $251M across bull, bear & sideways markets. Open source. Non-custodial. Your keys, your coins. Verify the code - then copy if you dare.">
+    <title>$NIKEPIG's Massive Rocket - Sign Up for Live Trading</title>
+    
+    <!-- Open Graph / Facebook / Discord / Slack -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rocket-hla.nikepig.com/signup">
+    <meta property="og:title" content="🚀 $NIKEPIG's Massive Rocket - Copy-Trade Crypto">
+    <meta property="og:description" content="$300 became $251M across bull, bear & sideways markets. Open source. Non-custodial. Your keys, your coins. Verify the code - then copy if you dare.">
+    <meta property="og:image" content="https://rocket-hla.nikepig.com/static/og-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://rocket-hla.nikepig.com/signup">
+    <meta name="twitter:title" content="🚀 $NIKEPIG's Massive Rocket - Copy-Trade Crypto">
+    <meta name="twitter:description" content="$300 became $251M across bull, bear & sideways markets. Open source. Non-custodial. Your keys, your coins. Verify the code - then copy if you dare.">
+    <meta name="twitter:image" content="https://rocket-hla.nikepig.com/static/og-preview.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f0f7ff;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .email-highlight {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #667eea;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .info-box p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .setup-btn {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .setup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .error-message {
+            color: #ef4444;
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+            border: 1px solid #fecaca;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .risk-disclosure {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .risk-disclosure h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .risk-disclosure p {
+            margin-bottom: 8px;
+        }
+
+        .risk-disclosure p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Safety Section Styles */
+        .safety-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .safety-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .safety-header h2 {
+            color: #fff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .safety-header .toggle-icon {
+            color: #667eea;
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .safety-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .safety-grid.hidden {
+            display: none;
+        }
+
+        .safety-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .safety-card h3 {
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .safety-card p {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .safety-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0 0;
+        }
+
+        .safety-card li {
+            color: #9ca3af;
+            font-size: 12px;
+            padding: 4px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .safety-card li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .github-link:hover {
+            background: #3a3f47;
+        }
+
+        .github-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .fee-tiers {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .fee-tier {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .fee-tier .tier-name {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .fee-tier .tier-rate {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Backtest Results Section */
+        .backtest-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            margin-bottom: 0;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .backtest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 0 14px 0;
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .backtest-header h2 {
+            color: #fff;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .backtest-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        @media (max-width: 500px) {
+            .backtest-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .backtest-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .backtest-card .market-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .backtest-card .market-badge.bull {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .backtest-card .market-badge.bear {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .backtest-card .market-badge.sideways {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .backtest-card .market-badge.full {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .backtest-card .period {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .backtest-card .result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 2px;
+        }
+
+        .backtest-card .final-value {
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .backtest-card .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .backtest-card .stat-label {
+            color: #6b7280;
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .backtest-card .stat-value {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .backtest-card .stat-value.negative {
+            color: #ef4444;
+        }
+
+        .backtest-card .stat-value.positive {
+            color: #10b981;
+        }
+
+        .backtest-disclaimer {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 8px;
+            font-size: 11px;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🚀 $NIKEPIG's Massive Rocket</h1>
+            <p>Automated Hyperliquid Perps Trading</p>
+        </div>
+
+        <div class="form-section">
+            <h2>Start Trading Today</h2>
+            
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+
+            <button class="btn" onclick="signup()">
+                <span id="btn-text">Create Free Account</span>
+                <span id="btn-loading" class="loading-spinner"></span>
+            </button>
+
+            <div id="error-message" class="error-message"></div>
+        </div>
+
+        <div id="result-section" class="result-section"></div>
+
+        <!-- Backtest Results Section -->
+        <div class="backtest-section">
+            <div class="backtest-header" onclick="toggleBacktestSection()">
+                <h2>📊 Backtested Performance</h2>
+                <span class="toggle-icon" id="backtestToggle">▼</span>
+            </div>
+            
+            <div class="backtest-grid" id="backtestGrid">
+                <!-- Bull Market -->
+                <div class="backtest-card">
+                    <span class="market-badge bull">🚀 BULL</span>
+                    <div class="period">Jan 2020 → Aug 2021</div>
+                    <div class="result">+10,132%</div>
+                    <div class="final-value">$300 → $30,695</div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">Buy & Hold</div>
+                            <div class="stat-value positive">+4,377%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Win Rate</div>
+                            <div class="stat-value">42.2%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bear Market -->
+                <div class="backtest-card">
+                    <span class="market-badge bear">🐻 BEAR</span>
+                    <div class="period">Sep 2021 → Jun 2023</div>
+                    <div class="result">+5,402%</div>
+                    <div class="final-value">$300 → $16,505</div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">Buy & Hold</div>
+                            <div class="stat-value negative">-84.4%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Win Rate</div>
+                            <div class="stat-value">42.0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sideways/Chop Market -->
+                <div class="backtest-card">
+                    <span class="market-badge sideways">🦀 CHOP</span>
+                    <div class="period">Jun 2023 → Nov 2025</div>
+                    <div class="result">+9,850%</div>
+                    <div class="final-value">$300 → $29,849</div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">Buy & Hold</div>
+                            <div class="stat-value positive">+60.9%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Win Rate</div>
+                            <div class="stat-value">41.1%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Cycle -->
+                <div class="backtest-card">
+                    <span class="market-badge full">📈 FULL</span>
+                    <div class="period">Jan 2020 → Nov 2025</div>
+                    <div class="result">+83.8M%</div>
+                    <div class="final-value">$300 → $251.4M</div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">Buy & Hold</div>
+                            <div class="stat-value positive">+582%</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Win Rate</div>
+                            <div class="stat-value">41.8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="backtest-disclaimer">
+                ⚠️ Past performance ≠ future results. Backtests use 20x max leverage, 2-3% risk/trade. Real trading has slippage & fees.
+            </div>
+        </div>
+
+        <!-- Safety & Trust Section -->
+        <div class="safety-section">
+            <div class="safety-header" onclick="toggleSafetySection()">
+                <h2>🛡️ Safety & Trust</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            
+            <div class="safety-grid" id="safetyGrid">
+                <div class="safety-card">
+                    <h3>🔐 100% Non-Custodial</h3>
+                    <p>Your funds never leave your Hyperliquid account.</p>
+                    <ul>
+                        <li>Trade-only API permissions</li>
+                        <li>Withdrawals NEVER enabled</li>
+                        <li>Revoke access anytime</li>
+                    </ul>
+                </div>
+
+                <div class="safety-card">
+                    <h3>📖 Fully Open Source</h3>
+                    <p>Don't trust, verify. Entire codebase is public.</p>
+                    <a href="https://github.com/DrCalebL/nike-rocket-api" target="_blank" class="github-link">
+                        <svg viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                        </svg>
+                        nike-rocket-api
+                    </a>
+                </div>
+
+                <div class="safety-card">
+                    <h3>🔄 Bulletproof Order Execution</h3>
+                    <p>Automatic retry logic protects every trade.</p>
+                    <ul>
+                        <li>3 retry attempts per order</li>
+                        <li>Entry/TP/SL fails = trade aborted safely</li>
+                        <li>Admin alerted on any failure</li>
+                    </ul>
+                </div>
+
+                <div class="safety-card">
+                    <h3>💰 Fair Profit-Share Billing</h3>
+                    <p>We only profit when YOU profit.</p>
+                    <ul>
+                        <li>10% of net profits only</li>
+                        <li>Losses offset wins</li>
+                        <li>No profit = no fee</li>
+                        <li>Manual trades are free</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="risk-disclosure">
+            <h4>⚠️ Risk Disclosure</h4>
+            <p>
+                <strong>Cryptocurrency futures trading involves substantial risk of loss and is not suitable for all investors.</strong> You could lose your entire investment. Leverage amplifies both gains and losses. Past performance does not guarantee future results.
+            </p>
+            <p>
+                Nike Rocket is not a financial advisor and does not provide investment advice. This service executes automated trades based on algorithmic signals. You are solely responsible for your trading decisions and any resulting profits or losses.
+            </p>
+            <p>
+                By signing up, you acknowledge that you understand these risks and agree to the terms of service. Only trade with capital you can afford to lose completely.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleSafetySection() {
+            const header = document.querySelector('.safety-header');
+            const grid = document.getElementById('safetyGrid');
+            header.classList.toggle('collapsed');
+            grid.classList.toggle('hidden');
+        }
+
+        function toggleBacktestSection() {
+            const grid = document.getElementById('backtestGrid');
+            const toggle = document.getElementById('backtestToggle');
+            const disclaimer = grid.nextElementSibling;
+            if (grid.style.display === 'none') {
+                grid.style.display = 'grid';
+                disclaimer.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                grid.style.display = 'none';
+                disclaimer.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        async function signup() {
+            const email = document.getElementById('email').value;
+            const btn = document.querySelector('.btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const errorMessage = document.getElementById('error-message');
+            const resultSection = document.getElementById('result-section');
+
+            // Validate email
+            if (!email || !email.includes('@')) {
+                errorMessage.textContent = 'Please enter a valid email address';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Hide error, show loading
+            errorMessage.classList.remove('show');
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+
+            try {
+                // Call API
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // NEW USER - API key sent via email (SECURE!)
+                    resultSection.innerHTML = `
+                        <h3>✅ Check Your Email!</h3>
+                        <p style="color: #666; margin: 15px 0;">
+                            We've sent your API key and setup instructions to:
+                        </p>
+                        <div class="email-highlight">${email}</div>
+                        
+                        <div class="info-box">
+                            <p>
+                                📧 <strong>Check your inbox</strong> for an email from Nike Rocket with your API key and a link to set up your trading agent.
+                            </p>
+                        </div>
+
+                        <p style="font-size: 14px; color: #666; text-align: center; margin-top: 20px;">
+                            Don't see the email? Check your spam folder or wait a minute and try again.
+                        </p>
+                    `;
+                    resultSection.classList.add('show');
+                    document.querySelector('.form-section').style.display = 'none';
+                    
+                } else if (response.status === 400 && data.detail === 'Email already registered') {
+                    // EXISTING USER - API key resent via email (SECURE!)
+                    resultSection.innerHTML = `
+                        <h3>✅ API Key Sent to Your Email!</h3>
+                        <p style="color: #666; margin: 15px 0;">
+                            Your account already exists! We've sent your API key to:
+                        </p>
+                        <div class="email-highlight">${email}</div>
+                        
+                        <div class="info-box">
+                            <p>
+                                📧 <strong>Check your inbox</strong> for an email with your API key and setup instructions.
+                            </p>
+                        </div>
+
+                        <p style="font-size: 14px; color: #666; text-align: center; margin-top: 20px;">
+                            Don't see the email? Check your spam folder or contact support.
+                        </p>
+                    `;
+                    resultSection.classList.add('show');
+                    document.querySelector('.form-section').style.display = 'none';
+                    
+                } else {
+                    // Show error
+                    errorMessage.textContent = data.detail || data.message || 'Signup failed. Please try again.';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorMessage.textContent = 'Network error. Please check your connection and try again.';
+                errorMessage.classList.add('show');
+            } finally {
+                // Reset button
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                signup();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 # HYPERLIQUID PORTFOLIO API - AUTO-DETECT INITIAL CAPITAL
 # ========================================================
-# Mirrors Kraken portfolio_api.py exactly, adapted for Hyperliquid SDK.
+# Adapted for Hyperliquid SDK.
 # EXACT same formulas for ROI, Profit Factor, Sharpe Ratio, Max Drawdown, etc.
 #
-# Key differences from Kraken:
+# Key features:
 # - Uses Hyperliquid SDK (info.user_state) instead of CCXT (fetch_balance)
-# - Credentials: hl_private_key_encrypted + hl_wallet_address (not kraken_api_key/secret)
+# - Credentials: hl_private_key_encrypted + hl_wallet_address (HL-native)
 # - No symbol conversion needed (Hyperliquid uses simple symbols like "ADA")
 
 from fastapi import APIRouter, Request, HTTPException
@@ -144,7 +144,7 @@ async def get_current_hl_balance(wallet_address: str, user_api_key: str = None):
     """
     Get current USD balance from Hyperliquid using SDK.
     
-    Replaces Kraken's CCXT-based balance fetching with:
+    Uses Hyperliquid SDK for balance fetching:
     info.user_state(wallet_address) -> marginSummary.accountValue
     """
     try:
@@ -306,7 +306,7 @@ async def get_portfolio_stats(request: Request, period: str = "30d"):
     Get portfolio statistics for a specific time period.
     
     ═══════════════════════════════════════════════════════════════
-    FORMULA DOCUMENTATION (EXACT MATCH WITH KRAKEN):
+    FORMULA DOCUMENTATION:
     ═══════════════════════════════════════════════════════════════
     
     1. TOTAL PROFIT (period): SUM(profit_usd) for trades in period

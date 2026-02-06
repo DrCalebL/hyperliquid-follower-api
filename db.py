@@ -1,6 +1,6 @@
 """
-Nike Rocket Hyperliquid - Database Connection Pool Singleton
-=============================================================
+Nike Rocket - Database Connection Pool Singleton
+=================================================
 Provides a single shared connection pool for all modules.
 
 Usage:

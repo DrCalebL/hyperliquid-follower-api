@@ -2,7 +2,7 @@
 Nike Rocket Hyperliquid Follower System - Database Models
 ==========================================================
 
-Mirrors Kraken follower_models.py exactly, adapted for Hyperliquid.
+Hyperliquid follower models.
 Supports:
 - Encrypted storage of Hyperliquid wallet credentials
 - Signal delivery tracking
@@ -39,7 +39,7 @@ class User(Base):
     api_key = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     
-    # User tier for fee rates (same as Kraken)
+    # User tier for fee rates
     fee_tier = Column(String, default='standard')
     
     # Encrypted Hyperliquid credentials
@@ -109,7 +109,7 @@ class User(Base):
             return None, None
     
     def check_payment_status(self) -> bool:
-        """Check if user has access (30-day billing system) - same as Kraken"""
+        """Check if user has access (30-day billing system)"""
         if not self.pending_invoice_id:
             return True
         if not self.invoice_due_date:
@@ -248,7 +248,7 @@ class PositionFill(Base):
     position_id = Column(Integer, ForeignKey("open_positions.id"), nullable=True)
     
     # Fill identifiers
-    kraken_order_id = Column(String, nullable=True)  # HL order oid
+    hl_order_id = Column(String, nullable=True)  # HL order oid
     fill_id = Column(String, nullable=False)  # Unique fill/trade ID
     
     # Fill details
@@ -300,7 +300,7 @@ class Trade(Base):
     
     # Trade identifiers
     trade_id = Column(String, unique=True, nullable=False)
-    kraken_order_id = Column(String, nullable=True)  # HL entry order ID
+    hl_order_id = Column(String, nullable=True)  # HL entry order ID
     
     # Timing
     opened_at = Column(DateTime, nullable=False)

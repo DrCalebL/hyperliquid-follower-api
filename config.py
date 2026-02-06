@@ -3,7 +3,7 @@ Nike Rocket Hyperliquid Configuration
 ======================================
 
 Centralized configuration for fee tiers, constants, and utility functions.
-Single source of truth - EXACT MIRROR of Kraken config.
+Single source of truth for Hyperliquid follower config.
 
 Author: Nike Rocket Team
 """
@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 # =============================================================================
-# FEE TIERS - Single Source of Truth (same as Kraken)
+# FEE TIERS - Single Source of Truth
 # =============================================================================
 
 FEE_TIERS = {
