@@ -786,6 +786,36 @@ async def admin_set_vault_expiry(
     return result
 
 
+@app.post("/admin/api-expiry/check-now")
+async def admin_force_expiry_check(password: str = ""):
+    """
+    Force an immediate expiry check (normally runs every 6 hours).
+    Use this to test email reminders after setting a near-future expiry date.
+    """
+    if password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    from api_expiry_service import check_vault_leader_expiry, check_follower_expiry, _get_db_url
+    
+    try:
+        conn = await asyncpg.connect(dsn=_get_db_url())
+        try:
+            await check_vault_leader_expiry(conn)
+            await check_follower_expiry(conn)
+        finally:
+            await conn.close()
+        
+        # Return current status too
+        status = await get_expiry_status()
+        return {
+            "status": "success",
+            "message": "Expiry check completed - emails sent if thresholds met",
+            "current_status": status
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ==================== TAX REPORTS ENDPOINTS ====================
 
 @app.get("/admin/reports/monthly-csv")
