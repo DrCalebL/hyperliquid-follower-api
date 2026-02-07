@@ -66,6 +66,7 @@ from tax_reports import (
 
 # Import 30-day rolling billing service for automated invoicing
 from billing_service_30day import BillingServiceV2, start_billing_scheduler_v2
+from api_expiry_service import start_expiry_checker, set_vault_expiry_date, get_expiry_status
 
 # Import billing API endpoints (webhooks, status)
 from billing_endpoints_30day import router as billing_router
@@ -272,6 +273,25 @@ if DATABASE_URL:
                 context TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        """)
+
+        # Create system_settings table (for vault API expiry tracking etc)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS system_settings (
+                key VARCHAR(100) PRIMARY KEY,
+                value TEXT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Add API wallet expiry columns to follower_users
+        cur.execute("""
+            ALTER TABLE follower_users 
+            ADD COLUMN IF NOT EXISTS api_wallet_expires_at TIMESTAMP
+        """)
+        cur.execute("""
+            ALTER TABLE follower_users 
+            ADD COLUMN IF NOT EXISTS api_expiry_last_reminder_days INTEGER
         """)
         
         conn.commit()
@@ -724,6 +744,47 @@ async def update_user_tier_endpoint(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== API WALLET EXPIRY ENDPOINTS ====================
+
+@app.get("/admin/api-expiry/status")
+async def admin_expiry_status(password: str = ""):
+    """
+    Get API wallet expiry status for vault leader and all followers.
+    Shows days remaining, reminder state, and any expired wallets.
+    """
+    if password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    result = await get_expiry_status()
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+    return result
+
+
+@app.post("/admin/api-expiry/vault")
+async def admin_set_vault_expiry(
+    expiry_date: str,
+    password: str = ""
+):
+    """
+    Set/update vault leader API wallet expiry date.
+    
+    Args:
+        expiry_date: ISO format date string, e.g. "2026-05-05T22:23:27"
+        password: Admin password
+    
+    After renewing your vault API wallet on Hyperliquid, call this
+    to update the tracked expiry date and reset reminders.
+    """
+    if password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    result = await set_vault_expiry_date(expiry_date)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
+
 
 # ==================== TAX REPORTS ENDPOINTS ====================
 
@@ -5199,6 +5260,13 @@ async def startup_event():
             # ═══════════════════════════════════════════════════════════
             asyncio.create_task(start_billing_scheduler_v2(db_pool))
             print("💰 Billing scheduler v2 scheduled (30-day rolling, starts in 60 seconds)")
+            
+            # ═══════════════════════════════════════════════════════════
+            # API EXPIRY CHECKER: Monitors API wallet expiration dates
+            # Checks every 6 hours, sends email reminders at 30/14/7/3/1 days
+            # ═══════════════════════════════════════════════════════════
+            asyncio.create_task(start_expiry_checker(db_pool))
+            print("🔑 API expiry checker scheduled (checks every 6 hours)")
             
         except Exception as e:
             print(f"⚠️ Background tasks failed to start: {e}")

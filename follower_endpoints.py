@@ -1036,6 +1036,10 @@ async def setup_agent(
         # Mark as ready
         user.credentials_set = True
         
+        # Set API wallet expiry (180 days from now - Hyperliquid max)
+        user.api_wallet_expires_at = datetime.utcnow() + timedelta(days=180)
+        user.api_expiry_last_reminder_days = None  # Reset reminders
+        
         # Ensure access is granted
         if not user.access_granted:
             user.access_granted = True

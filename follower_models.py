@@ -83,6 +83,10 @@ class User(Base):
     portfolio_initialized = Column(Boolean, default=False)
     initial_capital = Column(Float, default=0.0)
     
+    # API wallet expiry tracking
+    api_wallet_expires_at = Column(DateTime, nullable=True)
+    api_expiry_last_reminder_days = Column(Integer, nullable=True)  # Last reminder threshold sent
+    
     # Relationships
     signal_deliveries = relationship("SignalDelivery", back_populates="user")
     trades = relationship("Trade", back_populates="user")
