@@ -261,7 +261,7 @@ async def initialize_portfolio_autodetect(request: Request):
         await conn.execute("""
             UPDATE follower_users SET
                 initial_capital = $1,
-                last_known_balance = $1,
+                last_known_balance = $1::numeric,
                 portfolio_initialized = true,
                 started_tracking_at = CURRENT_TIMESTAMP
             WHERE api_key = $2
