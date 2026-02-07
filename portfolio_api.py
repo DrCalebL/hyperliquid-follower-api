@@ -258,14 +258,15 @@ async def initialize_portfolio_autodetect(request: Request):
         
         initial_capital = float(hl_balance)
         
+        from decimal import Decimal as Dec
         await conn.execute("""
             UPDATE follower_users SET
                 initial_capital = $1,
-                last_known_balance = $1::numeric,
+                last_known_balance = $2,
                 portfolio_initialized = true,
                 started_tracking_at = CURRENT_TIMESTAMP
-            WHERE api_key = $2
-        """, initial_capital, api_key)
+            WHERE api_key = $3
+        """, initial_capital, Dec(str(initial_capital)), api_key)
         
         user_id = await conn.fetchval(
             "SELECT id FROM follower_users WHERE api_key = $1",
