@@ -20,7 +20,7 @@ import os
 import logging
 import asyncio
 import asyncpg
-import httpx
+import aiohttp
 from datetime import datetime, timezone, timedelta
 
 logger = logging.getLogger(__name__)
@@ -128,8 +128,8 @@ async def _send_email(to_email: str, subject: str, html_body: str) -> bool:
         return False
     
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
                 RESEND_API_URL,
                 headers={
                     "Authorization": f"Bearer {RESEND_API_KEY}",
@@ -141,14 +141,15 @@ async def _send_email(to_email: str, subject: str, html_body: str) -> bool:
                     "subject": subject,
                     "html": html_body
                 },
-                timeout=10.0
-            )
-            if response.status_code in (200, 201):
-                logger.info(f"📧 Expiry reminder sent to {to_email}: {subject}")
-                return True
-            else:
-                logger.error(f"❌ Email failed ({response.status_code}): {response.text}")
-                return False
+                timeout=aiohttp.ClientTimeout(total=10)
+            ) as response:
+                if response.status in (200, 201):
+                    logger.info(f"📧 Expiry reminder sent to {to_email}: {subject}")
+                    return True
+                else:
+                    text = await response.text()
+                    logger.error(f"❌ Email failed ({response.status}): {text}")
+                    return False
     except Exception as e:
         logger.error(f"❌ Email send error: {e}")
         return False

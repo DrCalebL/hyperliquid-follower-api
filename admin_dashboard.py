@@ -1610,6 +1610,61 @@ def generate_admin_html(users: List[Dict], errors: List[Dict], stats: Dict, revi
         
         {review_positions_section}
         
+        <!-- API Wallet Expiry Section -->
+        <div class="users-section" id="expirySection" style="border: 2px solid #667eea;">
+            <h2 style="color: #818cf8;">🔑 API Wallet Expiry Tracker</h2>
+            <p style="color: #9ca3af; margin-bottom: 15px; font-size: 13px;">
+                Hyperliquid API wallets expire after 180 days. Monitor and manage expiry dates for your vault bot and all followers.
+            </p>
+            
+            <!-- Vault Leader Card -->
+            <div style="background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: #e5e7eb; margin: 0;">🏦 Vault Leader Bot</h3>
+                    <span id="vaultExpiryBadge" style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Loading...</span>
+                </div>
+                <div id="vaultExpiryInfo" style="color: #9ca3af; margin-bottom: 15px;">Loading vault expiry status...</div>
+                
+                <!-- Update Vault Expiry Form -->
+                <div style="background: #0f172a; border-radius: 8px; padding: 15px; border: 1px solid #1e293b;">
+                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 8px;">
+                        Update vault expiry date (from Hyperliquid API page → "Valid Until" column):
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="datetime-local" id="vaultExpiryInput" 
+                            style="flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #e5e7eb; font-size: 14px;">
+                        <button onclick="updateVaultExpiry()" 
+                            style="padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                            💾 Save
+                        </button>
+                    </div>
+                    <div id="vaultUpdateResult" style="margin-top: 8px; font-size: 13px;"></div>
+                </div>
+            </div>
+            
+            <!-- Follower Expiry Table -->
+            <div style="background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155;">
+                <h3 style="color: #e5e7eb; margin: 0 0 15px 0;">👥 Follower API Wallets</h3>
+                <div id="followerExpiryStats" style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <div style="color: #9ca3af; font-size: 13px;">Loading...</div>
+                </div>
+                <table id="followerExpiryTable" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 8px; color: #9ca3af; font-size: 12px; border-bottom: 1px solid #334155;">Email</th>
+                            <th style="text-align: left; padding: 8px; color: #9ca3af; font-size: 12px; border-bottom: 1px solid #334155;">Expires</th>
+                            <th style="text-align: center; padding: 8px; color: #9ca3af; font-size: 12px; border-bottom: 1px solid #334155;">Days Left</th>
+                            <th style="text-align: center; padding: 8px; color: #9ca3af; font-size: 12px; border-bottom: 1px solid #334155;">Agent</th>
+                            <th style="text-align: center; padding: 8px; color: #9ca3af; font-size: 12px; border-bottom: 1px solid #334155;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="followerExpiryBody">
+                        <tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7280;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
         <div class="errors-section">
             <div class="errors-header">
                 <h2>⚠️ Error History (SGT / GMT+8)</h2>
@@ -2059,6 +2114,133 @@ def generate_admin_html(users: List[Dict], errors: List[Dict], stats: Dict, revi
             }});
         }}
     }}
+
+    // ==================== API EXPIRY MANAGEMENT ====================
+    
+    async function loadExpiryStatus() {{
+        try {{
+            const response = await fetch(`/admin/api-expiry/status?password=${{'{ADMIN_PASSWORD}'}}`);
+            const data = await response.json();
+            
+            // Vault Leader section
+            const vaultInfo = document.getElementById('vaultExpiryInfo');
+            const vaultBadge = document.getElementById('vaultExpiryBadge');
+            
+            if (data.vault_leader) {{
+                const v = data.vault_leader;
+                const statusColors = {{
+                    'ok': {{ bg: '#064e3b', text: '#6ee7b7', label: '✅ OK' }},
+                    'warning': {{ bg: '#78350f', text: '#fbbf24', label: '⚠️ Expiring Soon' }},
+                    'critical': {{ bg: '#7f1d1d', text: '#fca5a5', label: '🔴 Critical' }},
+                    'expired': {{ bg: '#7f1d1d', text: '#fca5a5', label: '⛔ Expired' }}
+                }};
+                const s = statusColors[v.status] || statusColors['ok'];
+                vaultBadge.style.background = s.bg;
+                vaultBadge.style.color = s.text;
+                vaultBadge.textContent = s.label;
+                
+                vaultInfo.innerHTML = `
+                    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                        <div><span style="color: #6b7280;">Expires:</span> <strong style="color: #e5e7eb;">${{v.expiry_date}}</strong></div>
+                        <div><span style="color: #6b7280;">Days left:</span> <strong style="color: ${{v.days_remaining <= 7 ? '#ef4444' : v.days_remaining <= 30 ? '#fbbf24' : '#10b981'}};">${{v.days_remaining}}</strong></div>
+                    </div>
+                `;
+            }} else {{
+                vaultBadge.style.background = '#374151';
+                vaultBadge.style.color = '#9ca3af';
+                vaultBadge.textContent = 'Not Set';
+                vaultInfo.innerHTML = '<span style="color: #f59e0b;">⚠️ No vault expiry date configured. Set one below after authorizing your API wallet on Hyperliquid.</span>';
+            }}
+            
+            // Follower stats
+            const statsDiv = document.getElementById('followerExpiryStats');
+            statsDiv.innerHTML = `
+                <div style="background: #0f172a; padding: 8px 16px; border-radius: 8px;">
+                    <span style="color: #6b7280; font-size: 12px;">Tracked</span><br>
+                    <strong style="color: #e5e7eb; font-size: 18px;">${{data.total_followers_tracked}}</strong>
+                </div>
+                <div style="background: #0f172a; padding: 8px 16px; border-radius: 8px;">
+                    <span style="color: #6b7280; font-size: 12px;">Expiring Soon</span><br>
+                    <strong style="color: ${{data.expiring_soon > 0 ? '#fbbf24' : '#10b981'}}; font-size: 18px;">${{data.expiring_soon}}</strong>
+                </div>
+                <div style="background: #0f172a; padding: 8px 16px; border-radius: 8px;">
+                    <span style="color: #6b7280; font-size: 12px;">Expired</span><br>
+                    <strong style="color: ${{data.expired > 0 ? '#ef4444' : '#10b981'}}; font-size: 18px;">${{data.expired}}</strong>
+                </div>
+            `;
+            
+            // Follower table
+            const tbody = document.getElementById('followerExpiryBody');
+            if (data.followers && data.followers.length > 0) {{
+                tbody.innerHTML = data.followers.map(f => {{
+                    const statusColors = {{
+                        'ok': {{ bg: '#064e3b', text: '#6ee7b7', dot: '🟢' }},
+                        'warning': {{ bg: '#78350f', text: '#fbbf24', dot: '🟡' }},
+                        'critical': {{ bg: '#7f1d1d', text: '#fca5a5', dot: '🔴' }},
+                        'expired': {{ bg: '#7f1d1d', text: '#fca5a5', dot: '⛔' }}
+                    }};
+                    const s = statusColors[f.status] || statusColors['ok'];
+                    const daysColor = f.days_remaining < 0 ? '#ef4444' : f.days_remaining <= 7 ? '#ef4444' : f.days_remaining <= 30 ? '#fbbf24' : '#10b981';
+                    
+                    return `<tr>
+                        <td style="padding: 10px 8px; color: #e5e7eb; border-bottom: 1px solid #1e293b;">${{f.email}}</td>
+                        <td style="padding: 10px 8px; color: #9ca3af; border-bottom: 1px solid #1e293b; font-size: 13px;">${{f.expiry_date}}</td>
+                        <td style="padding: 10px 8px; text-align: center; border-bottom: 1px solid #1e293b;">
+                            <strong style="color: ${{daysColor}};">${{f.days_remaining < 0 ? 'EXPIRED' : f.days_remaining + 'd'}}</strong>
+                        </td>
+                        <td style="padding: 10px 8px; text-align: center; border-bottom: 1px solid #1e293b;">
+                            ${{f.agent_active ? '<span style="color: #10b981;">● Active</span>' : '<span style="color: #6b7280;">○ Off</span>'}}
+                        </td>
+                        <td style="padding: 10px 8px; text-align: center; border-bottom: 1px solid #1e293b;">
+                            <span style="background: ${{s.bg}}; color: ${{s.text}}; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${{s.dot}} ${{f.status}}</span>
+                        </td>
+                    </tr>`;
+                }}).join('');
+            }} else {{
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #6b7280;">No followers with API wallets configured yet</td></tr>';
+            }}
+            
+        }} catch (err) {{
+            console.error('Failed to load expiry status:', err);
+            document.getElementById('vaultExpiryInfo').innerHTML = '<span style="color: #ef4444;">Failed to load expiry data</span>';
+        }}
+    }}
+    
+    async function updateVaultExpiry() {{
+        const input = document.getElementById('vaultExpiryInput');
+        const resultDiv = document.getElementById('vaultUpdateResult');
+        
+        if (!input.value) {{
+            resultDiv.innerHTML = '<span style="color: #ef4444;">Please select a date</span>';
+            return;
+        }}
+        
+        // Convert local datetime to ISO
+        const expiryDate = new Date(input.value).toISOString();
+        
+        try {{
+            const response = await fetch(`/admin/api-expiry/vault?password=${{'{ADMIN_PASSWORD}'}}&expiry_date=${{encodeURIComponent(expiryDate)}}`, {{
+                method: 'POST'
+            }});
+            const data = await response.json();
+            
+            if (data.status === 'success') {{
+                resultDiv.innerHTML = `<span style="color: #10b981;">✅ Updated! Expires: ${{data.expiry_date}} (${{data.days_remaining}} days from now). Reminders reset.</span>`;
+                // Reload the section
+                setTimeout(loadExpiryStatus, 1000);
+            }} else {{
+                resultDiv.innerHTML = `<span style="color: #ef4444;">❌ ${{data.detail || data.error || 'Failed'}}</span>`;
+            }}
+        }} catch (err) {{
+            resultDiv.innerHTML = `<span style="color: #ef4444;">❌ Error: ${{err.message}}</span>`;
+        }}
+    }}
+    
+    // Load expiry data on page load
+    loadExpiryStatus();
+    // Refresh every 5 minutes
+    setInterval(loadExpiryStatus, 300000);
+    
     </script>
 </body>
 </html>"""
