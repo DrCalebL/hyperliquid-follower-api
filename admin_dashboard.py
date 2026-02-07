@@ -187,7 +187,7 @@ def get_all_users_with_status() -> List[Dict]:
                 try:
                     cur.execute("""
                         SELECT COUNT(*) FROM error_logs 
-                        WHERE api_key = %s AND timestamp > NOW() - INTERVAL '24 hours'
+                        WHERE api_key = %s AND created_at > NOW() - INTERVAL '24 hours'
                     """, (api_key,))
                     recent_errors = cur.fetchone()[0]
                 except:
@@ -250,7 +250,7 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
                     el.context
                 FROM error_logs el
                 LEFT JOIN follower_users fu ON el.api_key = fu.api_key
-                WHERE el.timestamp > NOW() - INTERVAL '%s hours'
+                WHERE el.created_at > NOW() - INTERVAL '%s hours'
                 ORDER BY el.timestamp DESC
                 LIMIT %s
             """, (hours, limit))
@@ -451,7 +451,7 @@ def get_stats_summary() -> Dict:
     errors_1h = 0
     if table_exists('error_logs'):
         try:
-            cur.execute("SELECT COUNT(*) FROM error_logs WHERE timestamp > NOW() - INTERVAL '1 hour'")
+            cur.execute("SELECT COUNT(*) FROM error_logs WHERE created_at > NOW() - INTERVAL '1 hour'")
             errors_1h = cur.fetchone()[0]
         except:
             pass
@@ -592,7 +592,7 @@ def cleanup_old_errors(days: int = 30) -> int:
         
         cur.execute("""
             DELETE FROM error_logs 
-            WHERE timestamp < NOW() - INTERVAL '%s days'
+            WHERE created_at < NOW() - INTERVAL '%s days'
         """, (days,))
         
         deleted = cur.rowcount
@@ -623,18 +623,18 @@ def get_error_stats() -> Dict:
         total = cur.fetchone()[0]
         
         # Last 24 hours
-        cur.execute("SELECT COUNT(*) FROM error_logs WHERE timestamp > NOW() - INTERVAL '24 hours'")
+        cur.execute("SELECT COUNT(*) FROM error_logs WHERE created_at > NOW() - INTERVAL '24 hours'")
         last_24h = cur.fetchone()[0]
         
         # Last 7 days
-        cur.execute("SELECT COUNT(*) FROM error_logs WHERE timestamp > NOW() - INTERVAL '7 days'")
+        cur.execute("SELECT COUNT(*) FROM error_logs WHERE created_at > NOW() - INTERVAL '7 days'")
         last_7d = cur.fetchone()[0]
         
         # By type (top 10)
         cur.execute("""
             SELECT error_type, COUNT(*) as cnt 
             FROM error_logs 
-            WHERE timestamp > NOW() - INTERVAL '7 days'
+            WHERE created_at > NOW() - INTERVAL '7 days'
             GROUP BY error_type 
             ORDER BY cnt DESC 
             LIMIT 10
