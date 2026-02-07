@@ -67,7 +67,7 @@
             font-size: 13px;
         }
         
-        .step ul {
+        .step ul, .step ol {
             margin-left: 20px;
             margin-top: 8px;
             color: #6b7280;
@@ -75,7 +75,8 @@
         }
         
         .step li {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            line-height: 1.5;
         }
         
         .input-group {
@@ -207,7 +208,7 @@
             margin-bottom: 0;
         }
         
-        .info-box ul {
+        .info-box ul, .info-box ol {
             margin-left: 20px;
             margin-top: 8px;
             color: #1e3a8a;
@@ -307,7 +308,7 @@
         }
         
         .collapsible.open .collapsible-content {
-            max-height: 500px;
+            max-height: 800px;
             padding: 0 16px 16px 16px;
         }
         
@@ -326,6 +327,32 @@
         
         .collapsible-content li {
             margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .danger-box {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .danger-box strong {
+            color: #991b1b;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .danger-box p {
+            color: #991b1b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .danger-box p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -341,46 +368,41 @@
             <strong>✅ Before You Begin - Quick Checklist</strong>
             <div class="checklist-item">
                 <input type="checkbox" id="check1">
-                <label for="check1">Hyperliquid account verified to <strong>"Verified" (Intermediate)</strong> or higher</label>
+                <label for="check1">Hyperliquid account created at <a href="https://app.hyperliquid.xyz" target="_blank" class="link">app.hyperliquid.xyz</a></label>
             </div>
             <div class="checklist-item">
                 <input type="checkbox" id="check2">
-                <label for="check2">Clicked <strong>"Unlock Futures"</strong> in Hyperliquid</label>
+                <label for="check2"><strong>USDC deposited</strong> to your Hyperliquid account ($300+ recommended)</label>
             </div>
             <div class="checklist-item">
                 <input type="checkbox" id="check3">
-                <label for="check3">Created <strong>Futures API keys</strong> (not regular Spot keys — see Step 2 below for required API settings)</label>
-            </div>
-            <div class="checklist-item">
-                <input type="checkbox" id="check4">
-                <label for="check4"><strong>USD balance</strong> in your Hyperliquid wallet ($300+ recommended)</label>
+                <label for="check3">Created an <strong>API Wallet</strong> at <a href="https://app.hyperliquid.xyz/API" target="_blank" class="link">More → API</a> (see Step 2 below)</label>
             </div>
         </div>
         
         <!-- Funding Info Box -->
         <div class="info-box">
-            <strong>💵 Important: Nike Rocket trades USD pairs only!</strong>
-            <p>Your Hyperliquid wallet needs <strong>USD balance</strong> to trade. USDT/USDC won't work directly.</p>
+            <strong>💵 Fund Your Hyperliquid Account</strong>
+            <p>You need <strong>USDC on Arbitrum</strong> deposited to Hyperliquid to trade.</p>
             
             <div class="collapsible" id="funding-help">
                 <div class="collapsible-header" onclick="toggleCollapsible('funding-help')">
-                    <span>📖 How to fund with USDT/USDC (click to expand)</span>
+                    <span>📖 How to deposit USDC to Hyperliquid (click to expand)</span>
                     <span class="collapsible-arrow">▼</span>
                 </div>
                 <div class="collapsible-content">
-                    <p><strong>If you have USDT or USDC:</strong></p>
+                    <p><strong>Step-by-step:</strong></p>
                     <ol>
-                        <li>Deposit USDC to your Hyperliquid account</li>
-                        <li>Go to <strong>Trade</strong> → Select <strong>USDT/USD</strong> or <strong>USDC/USD</strong> pair</li>
-                        <li><strong>Sell</strong> your USDT/USDC for USD</li>
-                        <li>Go to <strong>Transfer</strong> → Move USD from <strong>Spot → Hyperliquid</strong></li>
+                        <li>Send <strong>~$3 of ETH</strong> to your wallet on <strong>Arbitrum</strong> network (for gas fees)</li>
+                        <li>Send <strong>USDC</strong> to that same wallet on <strong>Arbitrum</strong> network</li>
+                        <li>Go to <a href="https://app.hyperliquid.xyz" target="_blank" class="link">app.hyperliquid.xyz</a> → Connect your wallet</li>
+                        <li>Click <strong>"Deposit"</strong> (top right corner)</li>
+                        <li>Asset → <strong>USDC</strong></li>
+                        <li>Deposit Chain → <strong>Arbitrum</strong></li>
+                        <li>Enter the amount and click <strong>"Deposit"</strong></li>
+                        <li>Approve the transaction in your wallet (1-5 min confirmation)</li>
                     </ol>
-                    <p style="margin-top: 12px;"><strong>If you have crypto (BTC, ETH, etc):</strong></p>
-                    <ol>
-                        <li>Deposit crypto to Spot</li>
-                        <li>Sell for USD on Spot market</li>
-                        <li>Transfer USD to Hyperliquid wallet</li>
-                    </ol>
+                    <p style="margin-top: 12px;"><strong>Supported wallets:</strong> MetaMask, Trust Wallet, Coinbase Wallet, OKX Wallet, Brave, WalletConnect, or Email login.</p>
                 </div>
             </div>
         </div>
@@ -402,42 +424,54 @@
             <small>Get this from your signup confirmation email</small>
         </div>
         
-        <!-- Step 2: Hyperliquid Credentials -->
+        <!-- Step 2: Hyperliquid API Wallet -->
         <div class="step">
-            <h3>🔑 Step 2: Hyperliquid API Credentials</h3>
-            <p>Enter your Hyperliquid wallet private key and address below.</p>
-            <p style="margin-top: 8px;">Required settings:</p>
-            <ul>
-                <li><code>General API: Full access</code> ✅</li>
-                <li><code>Withdrawal API: No access</code> ⛔ (keeps your funds safe!)</li>
-                <li><code>IP Address Restrictions: Off</code> 🌐 (our servers use rotating IPs)</li>
-            </ul>
+            <h3>🔑 Step 2: Create a Hyperliquid API Wallet</h3>
+            <p>API wallets (also known as agent wallets) can trade on your behalf <strong>without withdrawal permissions</strong> — your funds stay safe.</p>
+            <p style="margin-top: 12px;"><strong>How to create one:</strong></p>
+            <ol>
+                <li>Go to <a href="https://app.hyperliquid.xyz/API" target="_blank" class="link">app.hyperliquid.xyz → More → API</a></li>
+                <li>Enter a name (e.g. <code>nike_rocket</code>)</li>
+                <li>Click <strong>"Generate"</strong> to create the wallet address</li>
+                <li>Click <strong>"Authorize API Wallet"</strong></li>
+                <li>Set duration to <strong>180 days</strong> (maximum) and click <strong>"Authorize"</strong></li>
+                <li>⚠️ <strong>Copy the private key immediately</strong> from the red box — it disappears after you close the dialog!</li>
+                <li>Copy the <strong>API Wallet Address</strong> from the table</li>
+            </ol>
         </div>
         
+        <div class="danger-box">
+            <strong>🚨 Save Your API Wallet Private Key!</strong>
+            <p>Hyperliquid shows the private key in a <strong>red box</strong> after you click "Authorize". It will <strong>no longer be accessible once you close the dialog</strong> — copy it immediately!</p>
+        </div>
+
         <div class="warning-box">
-            <strong>⚠️ Security Notice</strong>
-            <p>Your credentials are encrypted using military-grade AES-256 encryption. We never have access to your raw API keys.</p>
-            <p>You can revoke access anytime by deleting the API key in Hyperliquid.</p>
+            <strong>🔒 Security Notice</strong>
+            <p>Your API wallet private key is encrypted using military-grade AES-256 encryption. We never have access to your raw keys.</p>
+            <p>API wallets <strong>cannot withdraw funds</strong> — they can only trade. You can revoke access anytime by deleting the API wallet on Hyperliquid.</p>
+            <p>API wallets expire after the duration you set (max 180 days). You'll need to re-authorize before it expires to keep trading.</p>
         </div>
         
         <div class="input-group">
-            <label for="hl-private-key">Hyperliquid Private Key:</label>
+            <label for="hl-private-key">API Wallet Private Key:</label>
             <input 
-                type="text" 
+                type="password" 
                 id="hl-private-key" 
-                placeholder="Your Hyperliquid API Public Key"
+                placeholder="0x..."
                 autocomplete="off"
             >
+            <small>The private key shown when you clicked "Generate" (starts with 0x)</small>
         </div>
         
         <div class="input-group">
-            <label for="hl-wallet">Hyperliquid Wallet Address:</label>
-            <textarea 
+            <label for="hl-wallet">Your Account Wallet Address:</label>
+            <input 
+                type="text" 
                 id="hl-wallet" 
-                rows="3" 
-                placeholder="Your Hyperliquid API Private Key"
+                placeholder="0x..."
                 autocomplete="off"
-            ></textarea>
+            >
+            <small>Your main Hyperliquid wallet address (the one holding your USDC)</small>
         </div>
         
         <!-- Step 3: Start Trading -->
@@ -491,8 +525,23 @@
                 return;
             }
             
-            if (!hlPrivateKey || !hlWallet) {
-                showAlert('Please enter both Hyperliquid API key and secret', 'error');
+            if (!hlPrivateKey) {
+                showAlert('Please enter your API Wallet private key', 'error');
+                return;
+            }
+
+            if (!hlPrivateKey.startsWith('0x')) {
+                showAlert('Private key should start with "0x"', 'error');
+                return;
+            }
+            
+            if (!hlWallet) {
+                showAlert('Please enter your Hyperliquid wallet address', 'error');
+                return;
+            }
+
+            if (!hlWallet.startsWith('0x')) {
+                showAlert('Wallet address should start with "0x"', 'error');
                 return;
             }
             
