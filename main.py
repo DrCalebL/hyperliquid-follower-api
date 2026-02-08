@@ -300,6 +300,12 @@ if DATABASE_URL:
             ADD COLUMN IF NOT EXISTS last_known_balance NUMERIC
         """)
         
+        # Add started_tracking_at for portfolio tracking
+        cur.execute("""
+            ALTER TABLE follower_users 
+            ADD COLUMN IF NOT EXISTS started_tracking_at TIMESTAMP
+        """)
+        
         conn.commit()
         cur.close()
         conn.close()

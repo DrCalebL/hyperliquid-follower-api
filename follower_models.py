@@ -12,7 +12,7 @@ Supports:
 Author: Nike Rocket Team
 """
 
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime, timedelta
@@ -82,6 +82,8 @@ class User(Base):
     # Portfolio tracking
     portfolio_initialized = Column(Boolean, default=False)
     initial_capital = Column(Float, default=0.0)
+    last_known_balance = Column(Numeric, nullable=True)
+    started_tracking_at = Column(DateTime, nullable=True)
     
     # API wallet expiry tracking
     api_wallet_expires_at = Column(DateTime, nullable=True)
