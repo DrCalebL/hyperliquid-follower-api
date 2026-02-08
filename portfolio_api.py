@@ -346,9 +346,10 @@ async def get_balance_summary(request: Request):
                         current_value = live_balance
                         last_balance_check = datetime.utcnow().isoformat()
                         # Update last_known_balance
+                        from decimal import Decimal as Dec
                         await conn.execute(
                             "UPDATE follower_users SET last_known_balance = $1 WHERE api_key = $2",
-                            current_value, api_key
+                            Dec(str(current_value)), api_key
                         )
                 except Exception as e:
                     print(f"Could not fetch live balance: {e}")
@@ -405,6 +406,9 @@ async def get_balance_summary(request: Request):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        print(f"Error in balance-summary: {e}")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
