@@ -323,6 +323,15 @@ if DATABASE_URL:
             ALTER TABLE portfolio_transactions 
             ADD COLUMN IF NOT EXISTS detection_method VARCHAR
         """)
+        conn.commit()
+        
+        # Drop NOT NULL on legacy columns that may still exist
+        for col in ['type', 'amount_usd']:
+            try:
+                cur.execute(f"ALTER TABLE portfolio_transactions ALTER COLUMN {col} DROP NOT NULL")
+                conn.commit()
+            except Exception:
+                conn.rollback()
         
         conn.commit()
         cur.close()
