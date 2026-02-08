@@ -160,9 +160,9 @@ class BalanceChecker:
                             
                             await conn.execute("""
                                 INSERT INTO portfolio_transactions 
-                                (follower_user_id, type, amount_usd, detected_at, notes)
-                                VALUES ($1, $2, $3, NOW(), $4)
-                            """, user['id'], tx_type, abs(diff),
+                                (follower_user_id, user_id, transaction_type, amount, detection_method, detected_at, notes)
+                                VALUES ($1, $2, $3, $4, 'automatic', NOW(), $5)
+                            """, user['id'], user['api_key'], tx_type, abs(diff),
                                 f"Auto-detected: balance changed ${diff:+.2f}")
                             
                             logger.info(f"💰 {user_short}: {tx_type.upper()} detected: ${abs(diff):,.2f}")

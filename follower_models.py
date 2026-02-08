@@ -288,10 +288,12 @@ class PortfolioTransaction(Base):
     __tablename__ = "portfolio_transactions"
     
     id = Column(Integer, primary_key=True, index=True)
-    follower_user_id = Column(Integer, ForeignKey("follower_users.id"), nullable=False)
+    follower_user_id = Column(Integer, ForeignKey("follower_users.id"), nullable=True)
+    user_id = Column(String, nullable=True)  # api_key for lookup
     
-    type = Column(String, nullable=False)  # deposit or withdrawal
-    amount_usd = Column(Float, nullable=False)
+    transaction_type = Column(String, nullable=False)  # deposit, withdrawal, initial
+    amount = Column(Float, nullable=False)
+    detection_method = Column(String, nullable=True)  # automatic, manual
     detected_at = Column(DateTime, default=datetime.utcnow)
     notes = Column(String, nullable=True)
 

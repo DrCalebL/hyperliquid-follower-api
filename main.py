@@ -306,6 +306,24 @@ if DATABASE_URL:
             ADD COLUMN IF NOT EXISTS started_tracking_at TIMESTAMP
         """)
         
+        # Fix portfolio_transactions schema
+        cur.execute("""
+            ALTER TABLE portfolio_transactions 
+            ADD COLUMN IF NOT EXISTS user_id VARCHAR
+        """)
+        cur.execute("""
+            ALTER TABLE portfolio_transactions 
+            ADD COLUMN IF NOT EXISTS transaction_type VARCHAR
+        """)
+        cur.execute("""
+            ALTER TABLE portfolio_transactions 
+            ADD COLUMN IF NOT EXISTS amount DOUBLE PRECISION
+        """)
+        cur.execute("""
+            ALTER TABLE portfolio_transactions 
+            ADD COLUMN IF NOT EXISTS detection_method VARCHAR
+        """)
+        
         conn.commit()
         cur.close()
         conn.close()
