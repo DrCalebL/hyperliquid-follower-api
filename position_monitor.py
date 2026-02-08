@@ -319,10 +319,6 @@ class PositionMonitor:
                     op.quantity,
                     op.leverage,
                     op.entry_fill_price,
-                    op.avg_entry_price,
-                    op.filled_quantity,
-                    op.fill_count,
-                    op.total_cost_basis,
                     op.target_tp,
                     op.target_sl,
                     op.opened_at,
@@ -484,9 +480,8 @@ class PositionMonitor:
         v3.0 implementation.
         """
         try:
-            entry_price = position.get('avg_entry_price') or position.get('entry_fill_price')
-            position_size = position.get('filled_quantity') or position.get('quantity')
-            fill_count = position.get('fill_count') or 1
+            entry_price = position.get('entry_fill_price')
+            position_size = position.get('quantity')
             leverage = position.get('leverage', 1)
             side = position.get('side')
             
@@ -575,7 +570,7 @@ class PositionMonitor:
                     profit_percent,
                     exit_type,
                     fee_charged,
-                    f"Signal trade. {fill_count} fills. P&L source: {pnl_source}"
+                    f"Signal trade. P&L source: {pnl_source}"
                 )
                 
                 # Update user stats
@@ -638,7 +633,7 @@ class PositionMonitor:
             check_result = await self.check_position_closed(
                 info, wallet_address, coin,
                 position['side'],
-                position.get('filled_quantity') or position['quantity'],
+                position['quantity'],
                 position['tp_order_id'],
                 position['sl_order_id'],
                 position['user_api_key']
@@ -663,7 +658,7 @@ class PositionMonitor:
                 return
             
             # Verify exit type from price proximity
-            entry = position.get('avg_entry_price') or position['entry_fill_price']
+            entry = position['entry_fill_price']
             tp = position['target_tp']
             sl = position['target_sl']
             
