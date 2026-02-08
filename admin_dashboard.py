@@ -68,7 +68,7 @@ def create_error_logs_table():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS error_logs (
             id SERIAL PRIMARY KEY,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             api_key VARCHAR(100),
             error_type VARCHAR(100),
             error_message TEXT,
@@ -91,7 +91,7 @@ def create_error_logs_table():
     # No need to create it here as it has a different schema
     
     # Indexes
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_error_logs_timestamp ON error_logs(timestamp DESC)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_error_logs_timestamp ON error_logs(created_at DESC)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_agent_logs_timestamp ON agent_logs(timestamp DESC)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_trades_closed_at ON trades(closed_at DESC)")
     
@@ -242,7 +242,7 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
         if hours:
             cur.execute("""
                 SELECT 
-                    el.timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
+                    el.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
                     el.api_key, 
                     el.error_type, 
                     el.error_message,
@@ -251,14 +251,14 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
                 FROM error_logs el
                 LEFT JOIN follower_users fu ON el.api_key = fu.api_key
                 WHERE el.created_at > NOW() - INTERVAL '%s hours'
-                ORDER BY el.timestamp DESC
+                ORDER BY el.created_at DESC
                 LIMIT %s
             """, (hours, limit))
         else:
             # Get ALL errors (with reasonable limit)
             cur.execute("""
                 SELECT 
-                    el.timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
+                    el.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
                     el.api_key, 
                     el.error_type, 
                     el.error_message,
@@ -266,7 +266,7 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
                     el.context
                 FROM error_logs el
                 LEFT JOIN follower_users fu ON el.api_key = fu.api_key
-                ORDER BY el.timestamp DESC
+                ORDER BY el.created_at DESC
                 LIMIT %s
             """, (limit,))
         
