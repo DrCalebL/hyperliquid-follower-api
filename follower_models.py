@@ -223,12 +223,6 @@ class OpenPosition(Base):
     # Actual fill price from exchange (may differ from signal due to slippage)
     entry_fill_price = Column(Float, nullable=True)
     
-    # Aggregated fill data (updated by position monitor)
-    avg_entry_price = Column(Float, nullable=True)
-    filled_quantity = Column(Float, nullable=True)
-    fill_count = Column(Integer, default=0)
-    total_cost_basis = Column(Float, nullable=True)
-    
     # Target prices from signal
     target_tp = Column(Float, nullable=False)
     target_sl = Column(Float, nullable=False)
