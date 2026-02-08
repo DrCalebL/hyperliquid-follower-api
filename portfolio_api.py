@@ -343,7 +343,7 @@ async def get_balance_summary(request: Request):
                 try:
                     live_balance = await get_current_hl_balance(wallet_address, api_key)
                     if live_balance is not None:
-                        current_value = live_balance
+                        current_value = float(live_balance)
                         last_balance_check = datetime.utcnow().isoformat()
                         # Update last_known_balance
                         from decimal import Decimal as Dec
