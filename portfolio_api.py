@@ -40,8 +40,8 @@ async def log_error_async(api_key: str, error_type: str, error_message: str, con
         
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute(
-            """INSERT INTO error_logs (api_key, error_type, error_message, context) 
-               VALUES ($1, $2, $3, $4)""",
+            """INSERT INTO error_logs (api_key, error_type, error_message, context, created_at) 
+               VALUES ($1, $2, $3, $4, NOW())""",
             api_key[:20] + "..." if api_key and len(api_key) > 20 else api_key,
             error_type,
             error_message[:500] if error_message else None,

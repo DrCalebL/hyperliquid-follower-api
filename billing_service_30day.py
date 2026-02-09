@@ -64,8 +64,8 @@ async def log_error_to_db(pool, api_key: str, error_type: str, error_message: st
     try:
         async with pool.acquire() as conn:
             await conn.execute(
-                """INSERT INTO error_logs (api_key, error_type, error_message, context) 
-                   VALUES ($1, $2, $3, $4)""",
+                """INSERT INTO error_logs (api_key, error_type, error_message, context, created_at) 
+                   VALUES ($1, $2, $3, $4, NOW())""",
                 api_key[:20] + "..." if api_key and len(api_key) > 20 else api_key,
                 error_type,
                 error_message[:ERROR_MESSAGE_MAX_LENGTH] if error_message else None,
@@ -1198,6 +1198,34 @@ async def billing_scheduler_v2(db_pool: asyncpg.Pool):
 async def start_billing_scheduler_v2(db_pool: asyncpg.Pool):
     """Entry point for billing scheduler (call from main.py)"""
     await asyncio.sleep(60)  # Wait for app startup
+    
+    # Defensive: ensure billing_invoices table exists
+    try:
+        async with db_pool.acquire() as conn:
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS billing_invoices (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    billing_cycle_id INTEGER,
+                    coinbase_charge_id TEXT,
+                    coinbase_charge_code TEXT,
+                    hosted_url TEXT,
+                    amount_usd NUMERIC(20,8) DEFAULT 0,
+                    profit_amount NUMERIC(20,8) DEFAULT 0,
+                    fee_tier VARCHAR(20),
+                    fee_percentage NUMERIC(5,4) DEFAULT 0,
+                    cycle_start TIMESTAMP,
+                    cycle_end TIMESTAMP,
+                    expires_at TIMESTAMP,
+                    status VARCHAR(20) DEFAULT 'pending',
+                    paid_at TIMESTAMP,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+        logger.info("✅ billing_invoices table verified")
+    except Exception as e:
+        logger.error(f"Failed to verify billing_invoices table: {e}")
+    
     logger.info("💰 Starting billing scheduler v2...")
     await billing_scheduler_v2(db_pool)
 

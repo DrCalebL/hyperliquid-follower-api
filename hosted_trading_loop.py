@@ -68,8 +68,8 @@ async def log_error_to_db(pool, api_key: str, error_type: str, error_message: st
     try:
         async with pool.acquire() as conn:
             await conn.execute(
-                """INSERT INTO error_logs (api_key, error_type, error_message, context) 
-                   VALUES ($1, $2, $3, $4)""",
+                """INSERT INTO error_logs (api_key, error_type, error_message, context, created_at) 
+                   VALUES ($1, $2, $3, $4, NOW())""",
                 api_key[:20] + "..." if api_key and len(api_key) > 20 else api_key,
                 error_type,
                 error_message[:500] if error_message else None,

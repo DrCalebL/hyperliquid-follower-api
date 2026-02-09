@@ -5306,6 +5306,50 @@ async def startup_event():
             _db_pool = db_pool  # Set global for billing endpoints
             
             # ═══════════════════════════════════════════════════════════
+            # DEFENSIVE MIGRATIONS: Ensure all tables/columns exist
+            # Prevents "relation does not exist" errors from race conditions
+            # ═══════════════════════════════════════════════════════════
+            try:
+                async with db_pool.acquire() as conn:
+                    # Ensure billing_invoices exists
+                    await conn.execute("""
+                        CREATE TABLE IF NOT EXISTS billing_invoices (
+                            id SERIAL PRIMARY KEY,
+                            user_id INTEGER NOT NULL,
+                            billing_cycle_id INTEGER,
+                            coinbase_charge_id TEXT,
+                            coinbase_charge_code TEXT,
+                            hosted_url TEXT,
+                            amount_usd NUMERIC(20,8) DEFAULT 0,
+                            profit_amount NUMERIC(20,8) DEFAULT 0,
+                            fee_tier VARCHAR(20),
+                            fee_percentage NUMERIC(5,4) DEFAULT 0,
+                            cycle_start TIMESTAMP,
+                            cycle_end TIMESTAMP,
+                            expires_at TIMESTAMP,
+                            status VARCHAR(20) DEFAULT 'pending',
+                            paid_at TIMESTAMP,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    # Ensure last_known_balance column exists
+                    await conn.execute("""
+                        ALTER TABLE follower_users 
+                        ADD COLUMN IF NOT EXISTS last_known_balance NUMERIC
+                    """)
+                    # Ensure error_logs has DEFAULT on created_at
+                    await conn.execute("""
+                        ALTER TABLE error_logs ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP
+                    """)
+                    # Backfill any NULL timestamps
+                    await conn.execute("""
+                        UPDATE error_logs SET created_at = NOW() WHERE created_at IS NULL
+                    """)
+                print("✅ Async defensive migrations complete")
+            except Exception as e:
+                print(f"Note: Async migration check - {e}")
+            
+            # ═══════════════════════════════════════════════════════════
             # CRITICAL FIX: Added startup_delay_seconds parameter!
             # This prevents the "relation does not exist" error by waiting
             # for database tables to be created before starting balance checker

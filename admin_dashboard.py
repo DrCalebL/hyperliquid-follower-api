@@ -95,6 +95,18 @@ def create_error_logs_table():
     cur.execute("CREATE INDEX IF NOT EXISTS idx_agent_logs_timestamp ON agent_logs(timestamp DESC)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_trades_closed_at ON trades(closed_at DESC)")
     
+    # Backfill NULL timestamps in error_logs
+    try:
+        cur.execute("UPDATE error_logs SET created_at = NOW() WHERE created_at IS NULL")
+    except Exception:
+        pass
+    
+    # Ensure DEFAULT is set on created_at (in case table was created without it)
+    try:
+        cur.execute("ALTER TABLE error_logs ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP")
+    except Exception:
+        pass
+    
     # ========== SCHEMA MIGRATIONS ==========
     # Add fee_tier column to follower_users if it doesn't exist
     try:
@@ -242,7 +254,7 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
         if hours:
             cur.execute("""
                 SELECT 
-                    el.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
+                    COALESCE(el.created_at, el.id::text::timestamp) AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
                     el.api_key, 
                     el.error_type, 
                     el.error_message,
@@ -258,7 +270,7 @@ def get_recent_errors(hours: int = None, limit: int = 500) -> List[Dict]:
             # Get ALL errors (with reasonable limit)
             cur.execute("""
                 SELECT 
-                    el.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
+                    COALESCE(el.created_at, NOW()) AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Singapore' as timestamp_sgt,
                     el.api_key, 
                     el.error_type, 
                     el.error_message,
@@ -481,7 +493,7 @@ def log_error(api_key: str, error_type: str, error_message: str, context: Option
         cur = conn.cursor()
         import json
         cur.execute(
-            "INSERT INTO error_logs (api_key, error_type, error_message, context) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO error_logs (api_key, error_type, error_message, context, created_at) VALUES (%s, %s, %s, %s, NOW())",
             (api_key, error_type, error_message, json.dumps(context) if context else None)
         )
         conn.commit()
