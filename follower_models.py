@@ -12,7 +12,7 @@ Supports:
 Author: Nike Rocket Team
 """
 
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Numeric
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text, Numeric, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime, timedelta
@@ -242,6 +242,9 @@ class OpenPosition(Base):
 class PositionFill(Base):
     """Audit trail of individual execution fills from exchange"""
     __tablename__ = "position_fills"
+    __table_args__ = (
+        UniqueConstraint('user_id', 'fill_id', name='uq_position_fills_user_fill'),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("follower_users.id"), nullable=False)
