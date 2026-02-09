@@ -333,6 +333,16 @@ if DATABASE_URL:
             except Exception:
                 conn.rollback()
         
+        # Add unique constraint for ON CONFLICT in position_monitor
+        try:
+            cur.execute("""
+                ALTER TABLE position_fills 
+                ADD CONSTRAINT uq_position_fills_user_fill UNIQUE (user_id, fill_id)
+            """)
+            conn.commit()
+        except Exception:
+            conn.rollback()
+        
         conn.commit()
         cur.close()
         conn.close()
