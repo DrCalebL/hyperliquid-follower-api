@@ -1099,9 +1099,35 @@ async def get_agent_status(
             "agent_configured": False,
             "agent_active": False,
             "message": "Agent not configured. Please set up your Hyperliquid credentials.",
-            "setup_url": "/setup"
+            "setup_url": "/setup",
+            "api_wallet_expires_at": None,
+            "days_remaining": None,
+            "expired": False
         }
     
+    # -- API wallet expiry (timezone-aware, None-safe; legacy NULL = unknown, never "expired") --
+    # Mirrors api_expiry_service.py:276-281: naive stored value treated as UTC, days_remaining
+    # floors, and expired = days_remaining < 0 (the SAME boundary the expiry cron deactivates
+    # the agent on) so this display flag can never contradict backend behavior. Try/except so a
+    # malformed value never 500s this live customer endpoint; NULL yields (None, None, False).
+    api_wallet_expires_at = None
+    days_remaining = None
+    expired = False
+    try:
+        expiry = user.api_wallet_expires_at
+        if expiry is not None:
+            if expiry.tzinfo is None:
+                expiry = expiry.replace(tzinfo=timezone.utc)
+            now = datetime.now(timezone.utc)
+            api_wallet_expires_at = expiry.isoformat()
+            days_remaining = (expiry - now).days
+            expired = days_remaining < 0
+    except Exception as e:
+        logger.warning(f"agent-status expiry calc failed for {getattr(user, 'email', '?')}: {e}")
+        api_wallet_expires_at = None
+        days_remaining = None
+        expired = False
+
     # Check if agent is active
     return {
         "agent_configured": True,
@@ -1109,7 +1135,10 @@ async def get_agent_status(
         "agent_started_at": user.agent_started_at.isoformat() if user.agent_started_at else None,
         "agent_last_poll": user.agent_last_poll.isoformat() if user.agent_last_poll else None,
         "access_granted": user.access_granted,
-        "email": user.email
+        "email": user.email,
+        "api_wallet_expires_at": api_wallet_expires_at,
+        "days_remaining": days_remaining,
+        "expired": expired
     }
 
 
