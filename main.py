@@ -3713,6 +3713,22 @@ async def portfolio_dashboard(request: Request):
                 }} else if (statusData.agent_configured && statusData.expired === true) {{
                     statusHTML = '🔴 <strong>API wallet expired</strong> - <a href="/setup?key=' + currentApiKey + '" style="color: #dc2626;">Renew now →</a>';
                     statusClass = 'status-error';
+                    // This lean renderer normally paints only the banner, but Start must never
+                    // stay clickable once the wallet is expired. Mirror checkAgentStatus's badge
+                    // + button-hide here so a wallet that expires while the tab sits idle (only
+                    // this renderer runs on the 30s interval) can't leave a stale 'Ready' badge
+                    // and a live Start button beside the red 'expired' banner. Guarded so the
+                    // banner update never throws if these controls aren't in the DOM.
+                    var expiredBadge = document.getElementById('agent-status-badge');
+                    if (expiredBadge) {{
+                        expiredBadge.innerHTML = '🔴 Expired';
+                        expiredBadge.style.background = '#fee2e2';
+                        expiredBadge.style.color = '#991b1b';
+                    }}
+                    var expiredStartBtn = document.getElementById('start-agent-btn');
+                    if (expiredStartBtn) expiredStartBtn.style.display = 'none';
+                    var expiredStopBtn = document.getElementById('stop-agent-btn');
+                    if (expiredStopBtn) expiredStopBtn.style.display = 'none';
                 }} else if (statusData.agent_configured) {{
                     statusHTML = '🟡 <strong>Ready</strong> - Agent configured but stopped' + apiWalletBanner(statusData.days_remaining, statusData.expired);
                     statusClass = 'status-ready';
