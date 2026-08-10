@@ -3661,7 +3661,26 @@ async def portfolio_dashboard(request: Request):
         // ═══════════════════════════════════════════════════════════════
         // Agent Status Monitoring Functions
         // ═══════════════════════════════════════════════════════════════
-        
+
+        // -- API wallet expiry banner (shared by BOTH status renderers) --
+        // dr = days_remaining (int | null | undefined). Returns '' for legacy NULL / unknown
+        // so a missing value never trips the renew CTA (JS coerces null <= 7 to true).
+        function apiWalletBanner(dr, expired) {{
+            if (expired === true) {{
+                // Overlap case: agent still marked active but the wallet already expired.
+                return ' <span style="opacity: 0.85; font-size: 13px;">· API wallet expired</span> ' +
+                       '<a href="/setup?key=' + currentApiKey + '" style="color: #dc2626; font-weight: 600;">Renew API →</a>';
+            }}
+            if (typeof dr !== 'number' || dr < 0) return '';
+            var label = (dr === 0) ? 'API wallet expires today'
+                                   : ('API wallet: ' + dr + (dr === 1 ? ' day' : ' days') + ' left');
+            var chip = ' <span style="opacity: 0.85; font-size: 13px;">· ' + label + '</span>';
+            if (dr <= 7) {{
+                chip += ' <a href="/setup?key=' + currentApiKey + '" style="color: #dc2626; font-weight: 600;">Renew API →</a>';
+            }}
+            return chip;
+        }}
+
         async function checkAgentStatusAPI() {{
             try {{
                 const response = await fetch('/api/agent-status', {{
@@ -3687,12 +3706,15 @@ async def portfolio_dashboard(request: Request):
                 let statusHTML = '';
                 let statusClass = '';
                 
-                // API returns: agent_active, agent_configured, message
+                // API returns: agent_active, agent_configured, message, expired, days_remaining
                 if (statusData.agent_active) {{
-                    statusHTML = '🟢 <strong>Agent Active</strong> - Following signals';
+                    statusHTML = '🟢 <strong>Agent Active</strong> - Following signals' + apiWalletBanner(statusData.days_remaining, statusData.expired);
                     statusClass = 'status-active';
+                }} else if (statusData.agent_configured && statusData.expired === true) {{
+                    statusHTML = '🔴 <strong>API wallet expired</strong> - <a href="/setup?key=' + currentApiKey + '" style="color: #dc2626;">Renew now →</a>';
+                    statusClass = 'status-error';
                 }} else if (statusData.agent_configured) {{
-                    statusHTML = '🟡 <strong>Ready</strong> - Agent configured but stopped';
+                    statusHTML = '🟡 <strong>Ready</strong> - Agent configured but stopped' + apiWalletBanner(statusData.days_remaining, statusData.expired);
                     statusClass = 'status-ready';
                 }} else {{
                     statusHTML = '🔴 <strong>Not Configured</strong> - <a href="/setup?key=' + currentApiKey + '" style="color: #dc2626;">Complete setup</a>';
@@ -5042,11 +5064,12 @@ ROI: ${{roi}}`;
                 // ========== UPDATE TOP BANNER ==========
                 const topBanner = document.getElementById('agent-status-display');
                 
-                // API returns: agent_configured, agent_active, message
+                // API returns: agent_configured, agent_active, message, expired, days_remaining
+                const walletSuffix = apiWalletBanner(data.days_remaining, data.expired);
                 if (data.agent_active) {{
                     // Agent is running
                     if (topBanner) {{
-                        topBanner.innerHTML = '🟢 <strong>Agent Active</strong> - Following signals';
+                        topBanner.innerHTML = '🟢 <strong>Agent Active</strong> - Following signals' + walletSuffix;
                         topBanner.className = 'agent-status status-active';
                     }}
                     
@@ -5057,12 +5080,29 @@ ROI: ${{roi}}`;
                     document.getElementById('start-agent-btn').style.display = 'none';
                     document.getElementById('stop-agent-btn').style.display = 'block';
                     
-                    document.getElementById('agent-details').textContent = 'Agent is active and following signals';
+                    document.getElementById('agent-details').innerHTML = 'Agent is active and following signals' + walletSuffix;
                     
+                }} else if (data.agent_configured && data.expired === true) {{
+                    // API wallet expired - distinct red state (NOT the yellow 'Ready' paused copy)
+                    if (topBanner) {{
+                        topBanner.innerHTML = '🔴 <strong>API wallet expired</strong> - <a href="/setup?key=' + currentApiKey + '" style="color: #dc2626;">Renew now →</a>';
+                        topBanner.className = 'agent-status status-error';
+                    }}
+
+                    document.getElementById('agent-status-badge').innerHTML = '🔴 Expired';
+                    document.getElementById('agent-status-badge').style.background = '#fee2e2';
+                    document.getElementById('agent-status-badge').style.color = '#991b1b';
+
+                    document.getElementById('start-agent-btn').style.display = 'none';
+                    document.getElementById('stop-agent-btn').style.display = 'none';
+
+                    document.getElementById('agent-details').innerHTML =
+                        '<a href="/setup?key=' + currentApiKey + '" style="color: #dc2626; font-weight: 600;">Renew your API wallet now →</a>';
+
                 }} else if (data.agent_configured) {{
                     // Agent configured but not active
                     if (topBanner) {{
-                        topBanner.innerHTML = '🟡 <strong>Ready</strong> - Agent configured but stopped';
+                        topBanner.innerHTML = '🟡 <strong>Ready</strong> - Agent configured but stopped' + walletSuffix;
                         topBanner.className = 'agent-status status-ready';
                     }}
                     
@@ -5073,7 +5113,7 @@ ROI: ${{roi}}`;
                     document.getElementById('start-agent-btn').style.display = 'block';
                     document.getElementById('stop-agent-btn').style.display = 'none';
                     
-                    document.getElementById('agent-details').textContent = 'Agent configured - click Start to begin trading';
+                    document.getElementById('agent-details').innerHTML = 'Agent configured - click Start to begin trading' + walletSuffix;
                     
                 }} else {{
                     // Agent not configured
